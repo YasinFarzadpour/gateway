@@ -62,16 +62,15 @@ class Paypal extends PortAbstract implements PortInterface
     function getCallback()
     {
         if (!$this->callbackUrl)
-            $this->callbackUrl = $this->config->get('gateway.paypal.settings.call_back_url');
+            $this->callbackUrl = $this->gatewayDetails->settings['call_back_url'];
 
         return $this->makeCallback($this->callbackUrl, ['transaction_id' => $this->transactionId()]);
     }
 
     public function setApiContext()
     {
-        $paypal_conf = $this->config->get('gateway.paypal');
-        $this->_api_context = new ApiContext(new OAuthTokenCredential($paypal_conf['client_id'], $paypal_conf['secret']));
-        $this->_api_context->setConfig($paypal_conf['settings']);
+        $this->_api_context = new ApiContext(new OAuthTokenCredential($this->gatewayDetails->client_id, $this->gatewayDetails->secret));
+        $this->_api_context->setConfig($this->gatewayDetails->settings);
     }
 
     public function setShipmentPrice($shipmentPrice)
@@ -236,7 +235,7 @@ class Paypal extends PortAbstract implements PortInterface
 
     public function getProductName(){
         if(!$this->productName){
-            return $this->config->get('gateway.paypal.default_product_name');
+            return $this->gatewayDetails->default_product_name;
         }
 
         return $this->productName;
@@ -244,7 +243,7 @@ class Paypal extends PortAbstract implements PortInterface
 
     public function getShipmentPrice(){
         if(!$this->shipmentPrice){
-            return $this->config->get('gateway.paypal.default_shipment_price');
+            return $this->gatewayDetails->default_shipment_price;
         }
 
         return $this->shipmentPrice;

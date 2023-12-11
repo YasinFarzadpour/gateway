@@ -2,8 +2,10 @@
 namespace Larabookir\Gateway;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Validation\ValidationException;
 use Larabookir\Gateway\Enum;
 use Carbon\Carbon;
+use Larabookir\Gateway\Models\UserGateway;
 
 abstract class PortAbstract
 {
@@ -37,6 +39,20 @@ abstract class PortAbstract
 	 * @var int
 	 */
 	protected $portName;
+
+    /**
+     * User id
+     *
+     * @var int
+     */
+    protected $userId;
+
+    /**
+     * Gateway Details
+     *
+     * @var int
+     */
+    protected $gatewayDetails;
 
 	/**
 	 * Reference id
@@ -107,7 +123,7 @@ abstract class PortAbstract
 	 */
 	function getTable()
 	{
-		return $this->db->table($this->config->get('gateway.table'));
+		return $this->db->table($this->config->get('gateway.table-transactions'));
 	}
 
 	/**
@@ -137,6 +153,36 @@ abstract class PortAbstract
 	{
 		$this->portName = $name;
 	}
+
+    /**
+     * Get user id, $this->userId
+     *
+     * @return int
+     */
+    function setUserId($userId)
+    {
+        $this->userId = $userId;
+    }
+
+    /**
+     * Get user id, $this->userId
+     *
+     * @return int
+     */
+    function setGatewayDetails()
+    {
+        $name = strtolower($this->portName);
+        $gatewayId = $this->config->get('gateway.gateway_ids')[$name];
+
+        $userGateway = UserGateway::where('user_id', $this->userId)->where('gateway_id', $gatewayId)->first();
+
+        if (!$userGateway){
+            throw ValidationException::withMessages(['no details found']);
+        }
+
+        $this->gatewayDetails = json_decode($userGateway->gateway_details);
+
+    }
 
 	/**
 	 * Set custom description on current transaction
@@ -276,6 +322,7 @@ abstract class PortAbstract
 
 		$this->transactionId = $this->getTable()->insert([
 			'id' 			=> $uid,
+            'user_id'       => $this->userId,
 			'port' 			=> $this->getPortName(),
 			'price' 		=> $this->amount,
 			'status' 		=> Enum::TRANSACTION_INIT,

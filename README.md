@@ -2,7 +2,12 @@
 
 
 ```
-متاسفانه این پکیج دیگر پشتیبانی نمی شود
+پکیج ویرایش شده و قسمت های زیر به آن اضافه شده است:
+1. جدول user_gateway به منظور ذخیره سازی اطلاعات درگاهها
+2.اضافه شدن ستون user_id به جدول transactions
+3.اضافه شدن کلاس UserGatewayManagement به منظور مدیریت اطلاعات درگاهها
+4.اضافه شدن مدل UserGateway
+5.خواندن اطلاعات درگاههای هر کاربر از دیتابیس در فانکشن های مربوطه
 ```
 
 پکیج اتصال به تمامی IPG ها و  بانک های ایرانی.
@@ -110,8 +115,29 @@ php artisan migrate
  
 **مرحله ۵)**
 
-عملیات نصب پایان یافته است حال فایل gateway.php را در مسیر app/  باز نموده و  تنظیمات مربوط به درگاه بانکی مورد نظر خود را در آن وارد نمایید .
+عملیات نصب پایان یافته است.
 
+به منظور ذخیره و مدیریت اطلاعات درگاهها از متدهای زیر استفاده میکنیم:
+</div>
+
+<div>
+
+```php
+//create gateway :
+//$request->user_id =1 , $request->gateway_id=1 ,$request->gateway_details
+ UserGatewayManagement::assignGateway($request) 
+
+//edit gateway :
+//$request->user_id =1 , $request->gateway_id=1 ,$request->gateway_details
+ UserGatewayManagement::updateGateway($request) 
+ 
+ //delete gateway :
+ //$request->user_id =1 , $request->gateway_id=1
+ UserGatewayManagement::detachGateway($request) 
+
+```
+</div>
+<div>
 حال میتوایند برای اتصال به api  بانک  از یکی از روش های زیر به انتخاب خودتان استفاده نمایید . (Facade , Service container):
 </div>
  
@@ -135,7 +161,7 @@ php artisan migrate
 
 try {
 
-   $gateway = \Gateway::make('mellat');
+   $gateway = \Gateway::make('mellat',1); // user_id =1
 
    $gateway->setCallback(url('/bank/response')); // You can also change the callback
    $gateway->price(1000)

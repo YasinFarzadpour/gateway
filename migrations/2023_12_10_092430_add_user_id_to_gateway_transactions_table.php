@@ -4,34 +4,30 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddDescriptionToGatewayTransactions extends Migration
+return new class extends Migration
 {
-    public function getTable()
+
+    function getTable()
     {
         return config('gateway.table-transactions', 'gateway_transactions');
     }
-
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table($this->getTable(), function (Blueprint $table) {
-            $table->text('description')->after('ip')->nullable();
+            $table->foreignId('user_id');
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table($this->getTable(), function (Blueprint $table) {
-            $table->dropColumn('description');
+            $table->dropColumn('user_id');
         });
     }
-}
+};

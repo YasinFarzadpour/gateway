@@ -52,6 +52,7 @@
   "autoload": {
     "psr-4": {
       "Larabookir\\Gateway\\": "src/",
+      "Larabookir\\Gateway\\Models\\": "models/",
       "Larabookir\\Gateway\\Tests\\": "tests/"
     }
   },

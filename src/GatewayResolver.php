@@ -114,7 +114,7 @@ class GatewayResolver
 		if (in_array($transaction->status, [Enum::TRANSACTION_SUCCEED, Enum::TRANSACTION_FAILED]))
 			throw new RetryException;
 
-		$this->make($transaction->port);
+		$this->make($transaction->port,$transaction->user_id);
 
 		return $this->port->verify($transaction);
 	}
@@ -126,7 +126,7 @@ class GatewayResolver
 	 * @param int $port
 	 * @throws PortNotFoundException
 	 */
-	function make($port)
+	function make($port, $userId)
     {
         if ($port InstanceOf Mellat) {
             $name = Enum::MELLAT;
@@ -158,7 +158,9 @@ class GatewayResolver
 
         $this->port = $port;
         $this->port->setConfig($this->config); // injects config
-        $this->port->setPortName($name); // injects config
+        $this->port->setPortName($name); // injects portName
+        $this->port->setUserId($userId); // injects portName
+        $this->port->setGatewayDetails(); // injects userId
         $this->port->boot();
 
         return $this;

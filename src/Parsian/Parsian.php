@@ -84,7 +84,7 @@ class Parsian extends PortAbstract implements PortInterface
 	function getCallback()
 	{
 		if (!$this->callbackUrl)
-			$this->callbackUrl = $this->config->get('gateway.parsian.callback-url');
+			$this->callbackUrl = $this->gatewayDetails->callback_url;
 
 		return $this->makeCallback($this->callbackUrl, ['transaction_id' => $this->transactionId()]);
 	}
@@ -102,7 +102,7 @@ class Parsian extends PortAbstract implements PortInterface
 		$this->newTransaction();
 
 		$params = array(
-            'LoginAccount'   => $this->config->get('gateway.parsian.pin'),
+            'LoginAccount'   => $this->gatewayDetails->pin,
             'Amount'         => $this->amount . "",
             'OrderId'        => $this->transactionId(),
             'CallBackUrl'    => $this->getCallback(),
@@ -172,7 +172,7 @@ class Parsian extends PortAbstract implements PortInterface
 			throw new ParsianErrorException('تراکنشی یافت نشد', -1);
 
 		$params = array(
-            'LoginAccount' => $this->config->get('gateway.parsian.pin'),
+            'LoginAccount' => $this->gatewayDetails->pin,
             'Token'        => $authority,
 		);
 

@@ -10,7 +10,7 @@ class CreateGatewayTransactionsTable extends Migration
 {
 	function getTable()
 	{
-		return config('gateway.table', 'gateway_transactions');
+		return config('gateway.table-transactions', 'gateway_transactions');
 	}
 
 	/**
@@ -20,8 +20,8 @@ class CreateGatewayTransactionsTable extends Migration
 	 */
 	public function up()
 	{
-       
-	    
+
+
 		Schema::create($this->getTable(), function (Blueprint $table) {
 			$table->engine = "innoDB";
 			$table->unsignedBigInteger('id', true);
